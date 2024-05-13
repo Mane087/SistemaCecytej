@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import LogoCecyej from '../assets/logo-cectej.png';
 import loginStore from '../store/login.store';
+import { useNavigate } from 'react-router-dom';
 
 import Alumnos from './Alumnos'
 import Personal from './Personal';
@@ -13,7 +14,8 @@ import Prestamos from './Prestamos';
 import Devoluciones from './Devoluciones';
 
 
-const RecursosHumanos = () => {
+const RecursosHumanos = () =>{
+    const navigate = useNavigate();
     const [activeView, setActiveView] = useState(null);
     const { user, isLoggedIn } = loginStore(state => ({ user: state.user, isLoggedIn: state.isLoggedIn }));
     console.log(user, isLoggedIn);
@@ -50,6 +52,11 @@ const RecursosHumanos = () => {
             default:
                 setActiveView(null);
         }
+    }
+
+    const logOut = () => {
+        loginStore.setState({ user: {}, isLoggedIn: false });
+        navigate('/');
     }
 
 
@@ -123,7 +130,7 @@ const RecursosHumanos = () => {
                                 Materias
                             </button>
                             <button className='w-3/4 h-8 mx-auto text-white flex items-end justify-evenly text-xl gap-2'
-                                onClick={() => showing('Grupo')}
+                                onClick={() => showing('Grupos')}
                             >
                                 <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMSAxOHEtLjQyNSAwLS43MTItLjI4OFQwIDE3di0uNTc1cTAtMS4wNzUgMS4xLTEuNzVUNCAxNHEuMzI1IDAgLjYyNS4wMTN0LjU3NS4wNjJxLS4zNS41MjUtLjUyNSAxLjF0LS4xNzUgMS4yVjE4em02IDBxLS40MjUgMC0uNzEyLS4yODhUNiAxN3YtLjYyNXEwLS44LjQzOC0xLjQ2M3QxLjIzNy0xLjE2MlQ5LjU4OCAxM1QxMiAxMi43NXExLjMyNSAwIDIuNDM4LjI1dDEuOTEyLjc1dDEuMjI1IDEuMTYzdC40MjUgMS40NjJWMTdxMCAuNDI1LS4yODcuNzEzVDE3IDE4em0xMi41IDB2LTEuNjI1cTAtLjY1LS4xNjItMS4yMjV0LS40ODgtMS4wNzVxLjI3NS0uMDUuNTYzLS4wNjJUMjAgMTRxMS44IDAgMi45LjY2M3QxLjEgMS43NjJWMTdxMCAuNDI1LS4yODguNzEzVDIzIDE4ek00IDEzcS0uODI1IDAtMS40MTItLjU4N1QyIDExcTAtLjg1LjU4OC0xLjQyNVQ0IDlxLjg1IDAgMS40MjUuNTc1VDYgMTFxMCAuODI1LS41NzUgMS40MTNUNCAxM20xNiAwcS0uODI1IDAtMS40MTItLjU4N1QxOCAxMXEwLS44NS41ODgtMS40MjVUMjAgOXEuODUgMCAxLjQyNS41NzVUMjIgMTFxMCAuODI1LS41NzUgMS40MTNUMjAgMTNtLTgtMXEtMS4yNSAwLTIuMTI1LS44NzVUOSA5cTAtMS4yNzUuODc1LTIuMTM3VDEyIDZxMS4yNzUgMCAyLjEzOC44NjNUMTUgOXEwIDEuMjUtLjg2MiAyLjEyNVQxMiAxMiIvPjwvc3ZnPg==" alt="icono-personal"
                                 />
@@ -172,8 +179,7 @@ const RecursosHumanos = () => {
                     ) : null}
                 </div>
                 <div>
-                    <button className='text-white font-medium'>
-
+                    <button className='text-white font-medium' onClick={logOut}>
                         salir del sisetema
                     </button>
                 </div>
