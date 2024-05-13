@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import loginStore from '../store/login.store';
 import DataTable from 'react-data-table-component';
-import { getAsistencias } from '../APi/Asistencia';
-import ModalAsistencia from '../Components/ModalAsistencia';
+import { getLibros } from '../APi/Libros';
+import ModalLibros from '../Components/ModalLibros';
 
-const Asistencia = () => {
-    const { user } = loginStore(state => ({ user: state.user, isLoggedIn: state.isLoggedIn }));
+const Libros = () => {
     const [data, setData] = useState([])
     const [records, setRecords] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [update, setUpdate] = useState([]);
 
     useEffect(() => {
-        const getAsistenciasData = async () => {
-            const response = await getAsistencias()
+        const getLibrosData = async () => {
+            const response = await getLibros()
             console.log(response);
             setData(response)
             setRecords(response)
         }
-        getAsistenciasData()
+        getLibrosData()
     }, [])
 
     const handleOpenModal = () => {
@@ -31,31 +29,51 @@ const Asistencia = () => {
         setUpdate([]);  // Limpia el estado de update
     };
 
+
     const handleChange = (e) => {
         const value = e.target.value.toLowerCase();
         const filteredRecords = data.filter(record =>
-            record.numero_control.toLowerCase().includes(value)
+            record.nombre_libro.toLowerCase().includes(value)
         );
         setRecords(filteredRecords);
     }
 
     const columns = [
         {
-            name: 'Clave de Asistencia',
-            selector: row => row.clave_asistencia,
+            name: 'Número de Serie',
+            selector: row => row.num_serie,
             sortable: true,
         },
         {
-            name: 'Numero de control',
-            selector: row => row.numero_control,
+            name: 'Nombre del Libro',
+            selector: row => row.nombre_libro,
             sortable: true,
+        },
+        {
+            name: 'Ubicación',
+            selector: row => row.ubicacion,
+            sortable: true,
+        },
+        {
+            name: 'Clasificación',
+            selector: row => row.clasificacion,
+            sortable: true,
+        },
+        {
+            name: 'Cantidad',
+            selector: row => row.cantidad,
+            sortable: true,
+            right: true,
         }
     ];
+    
+
 
     return (
         <div className='w-[90%] h-full mx-auto'>
             <div className='flex items-center py-5 gap-5'>
-                <h1 className='font-bold text-2xl mr-5'>Asitencia</h1>
+                <h1 className='font-bold text-2xl mr-5'>Libros</h1>
+
                 <button className='w-max h-max flex items-center gap-1 text-lg border rounded-md p-2'
                     onClick={handleOpenModal}
                 >
@@ -68,6 +86,7 @@ const Asistencia = () => {
                     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDE1IDE1Ij48cGF0aCBmaWxsPSIjMDI4NGM3IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xLjkwMyA3LjI5N2MwIDMuMDQ0IDIuMjA3IDUuMTE4IDQuNjg2IDUuNTQ3YS41MjEuNTIxIDAgMSAxLS4xNzggMS4wMjdDMy41IDEzLjM2Ny44NjEgMTAuOTEzLjg2MSA3LjI5N2MwLTEuNTM3LjY5OS0yLjc0NSAxLjUxNS0zLjY2M2MuNTg1LS42NTggMS4yNTQtMS4xOTMgMS43OTItMS42MDJIMi41MzJhLjUuNSAwIDAgMSAwLTFoM2EuNS41IDAgMCAxIC41LjV2M2EuNS41IDAgMCAxLTEgMFYyLjY4NmwtLjAwMS4wMDJjLS41NzIuNDMtMS4yNy45NTctMS44NzUgMS42MzhjLS43MTUuODA0LTEuMjUzIDEuNzc2LTEuMjUzIDIuOTdtMTEuMTA4LjQwNmMwLTMuMDEyLTIuMTYtNS4wNzMtNC42MDctNS41MzNhLjUyMS41MjEgMCAxIDEgLjE5Mi0xLjAyNGMyLjg3NC41NCA1LjQ1NyAyLjk4IDUuNDU3IDYuNTU3YzAgMS41MzctLjY5OSAyLjc0NC0xLjUxNSAzLjY2M2MtLjU4NS42NTgtMS4yNTQgMS4xOTMtMS43OTIgMS42MDJoMS42MzZhLjUuNSAwIDEgMSAwIDFoLTNhLjUuNSAwIDAgMS0uNS0uNXYtM2EuNS41IDAgMSAxIDEgMHYxLjg0NWguMDAyYy41NzEtLjQzMiAxLjI3LS45NTggMS44NzQtMS42NGMuNzE1LS44MDMgMS4yNTMtMS43NzUgMS4yNTMtMi45NyIgY2xpcC1ydWxlPSJldmVub2RkIi8+PC9zdmc+" alt="icon-add" />
                     Actualizar
                 </button>
+
                 <div className='w-[220px] border rounded-md p-3 flex items-center'>
                     <input
                         type="text"
@@ -89,8 +108,8 @@ const Asistencia = () => {
                 />
             </div>
             {isModalOpen && (
-                <ModalAsistencia
-                    clave_asistencia={update}
+                <ModalLibros
+                    num_serie={update}
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
                 />
@@ -99,4 +118,4 @@ const Asistencia = () => {
     )
 }
 
-export default Asistencia
+export default Libros

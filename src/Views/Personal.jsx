@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import loginStore from '../store/login.store';
 import DataTable from 'react-data-table-component';
-import { getAllGrupos } from '../APi/Grupos';
-import ModalGrupos from '../Components/ModalGrupos';
+import { getPersonal, getAllPersonal } from '../APi/Personal';
+import ModalPersonal from '../Components/ModalPersonal';
 
-const Grupos = () => {
+const Personal = () => {
     const { user } = loginStore(state => ({ user: state.user, isLoggedIn: state.isLoggedIn }));
-    const [data, setData] = useState([])
+    const [personal, setPersonal] = useState([])
     const [records, setRecords] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [update, setUpdate] = useState([]);
+    const [update, setUpdate] = useState([])
 
     useEffect(() => {
-        const getGruposData = async () => {
-            const response = await getAllGrupos()
+        const getAllPersonalData = async () => {
+            const response = await getAllPersonal()
             console.log(response);
-            setData(response)
+            setPersonal(response)
             setRecords(response)
         }
-        getGruposData()
+        getAllPersonalData()
     }, [])
 
+    
     const handleOpenModal = () => {
         setIsModalOpen(true);  // Abre el modal
 
@@ -33,33 +34,81 @@ const Grupos = () => {
 
     const handleChange = (e) => {
         const value = e.target.value.toLowerCase();
-        const filteredRecords = data.filter(record =>
-            record.nombre.toLowerCase().includes(value)
+        const filteredRecords = personal.filter(record => 
+            record.nombre.toLowerCase().includes(value) ||
+            record.apellido_paterno.toLowerCase().includes(value) ||
+            record.apellido_materno.toLowerCase().includes(value)
         );
         setRecords(filteredRecords);
     }
 
     const columns = [
         {
-            name: 'Clave de Grupo',
-            selector: row => row.clave_grupo,
+            name: 'Número de Identificación',
+            selector: row => row.numero_identificacion,
             sortable: true,
         },
         {
             name: 'Nombre',
             selector: row => row.nombre,
             sortable: true,
+        },
+        {
+            name: 'Apellido Paterno',
+            selector: row => row.apellido_paterno,
+            sortable: true,
+        },
+        {
+            name: 'Apellido Materno',
+            selector: row => row.apellido_materno,
+            sortable: true,
+        },
+        {
+            name: 'Domicilio',
+            selector: row => row.domicilio,
+            sortable: true,
+        },
+        {
+            name: 'Teléfono Personal',
+            selector: row => row.telefono_personal,
+            sortable: true,
+        },
+        {
+            name: 'CURP',
+            selector: row => row.curp,
+            sortable: true,
+        },
+        {
+            name: 'NSS',
+            selector: row => row.nss,
+            sortable: true,
+        },
+        {
+            name: 'Correo Electrónico',
+            selector: row => row.correo_electronico,
+            sortable: true,
+        },
+        {
+            name: 'Fotografía',
+            selector: row => row.fotografia,
+            cell: row => <img src={row.fotografia} alt="Foto" style={{ width: 50, height: 50 }} />,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+        },
+        {
+            name: 'Rol',
+            selector: row => row.role,
+            sortable: true,
         }
     ];
-
-
+    
 
     return (
         <div className='w-[90%] h-full mx-auto'>
         <div className='flex items-center py-5 gap-5'>
-            <h1 className='font-bold text-2xl mr-5'>Grupos</h1>
-            {user.role === 'Administrativo' || user.role === 'Maestro' ? (
-                <>
+            <h1 className='font-bold text-2xl mr-5'>Personal</h1>
+           
                     <button className='w-max h-max flex items-center gap-1 text-lg border rounded-md p-2'
                         onClick={handleOpenModal}
                     >
@@ -67,14 +116,13 @@ const Grupos = () => {
                         Agregar
                     </button>
                     <button className='w-max h-max flex items-center gap-1 text-lg border rounded-md p-2'
-                        onClick={handleOpenModal}
+                       onClick={handleOpenModal}
                     >
                         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDE1IDE1Ij48cGF0aCBmaWxsPSIjMDI4NGM3IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xLjkwMyA3LjI5N2MwIDMuMDQ0IDIuMjA3IDUuMTE4IDQuNjg2IDUuNTQ3YS41MjEuNTIxIDAgMSAxLS4xNzggMS4wMjdDMy41IDEzLjM2Ny44NjEgMTAuOTEzLjg2MSA3LjI5N2MwLTEuNTM3LjY5OS0yLjc0NSAxLjUxNS0zLjY2M2MuNTg1LS42NTggMS4yNTQtMS4xOTMgMS43OTItMS42MDJIMi41MzJhLjUuNSAwIDAgMSAwLTFoM2EuNS41IDAgMCAxIC41LjV2M2EuNS41IDAgMCAxLTEgMFYyLjY4NmwtLjAwMS4wMDJjLS41NzIuNDMtMS4yNy45NTctMS44NzUgMS42MzhjLS43MTUuODA0LTEuMjUzIDEuNzc2LTEuMjUzIDIuOTdtMTEuMTA4LjQwNmMwLTMuMDEyLTIuMTYtNS4wNzMtNC42MDctNS41MzNhLjUyMS41MjEgMCAxIDEgLjE5Mi0xLjAyNGMyLjg3NC41NCA1LjQ1NyAyLjk4IDUuNDU3IDYuNTU3YzAgMS41MzctLjY5OSAyLjc0NC0xLjUxNSAzLjY2M2MtLjU4NS42NTgtMS4yNTQgMS4xOTMtMS43OTIgMS42MDJoMS42MzZhLjUuNSAwIDEgMSAwIDFoLTNhLjUuNSAwIDAgMS0uNS0uNXYtM2EuNS41IDAgMSAxIDEgMHYxLjg0NWguMDAyYy41NzEtLjQzMiAxLjI3LS45NTggMS44NzQtMS42NGMuNzE1LS44MDMgMS4yNTMtMS43NzUgMS4yNTMtMi45NyIgY2xpcC1ydWxlPSJldmVub2RkIi8+PC9zdmc+" alt="icon-add" />
                         Actualizar
                     </button>
 
-                </>
-            ) : null}
+           
             <div className='w-[220px] border rounded-md p-3 flex items-center'>
                 <input
                     type="text"
@@ -96,14 +144,14 @@ const Grupos = () => {
             />
         </div>
         {isModalOpen && (
-            <ModalGrupos
-                clave_grupo={update}
+            <ModalPersonal
+                numero_identificacion={update}
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
             />
         )}
     </div>
     )
-}
+}   
 
-export default Grupos
+export default Personal
